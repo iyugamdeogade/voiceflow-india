@@ -1,0 +1,31 @@
+# Secrets and local config
+.env
+.env.*
+!.env.example
+*.pem
+application-local.yml
+application-local.properties
+
+# Build output
+backend/target/
+*.class
+*.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.log
+
+# Node (frontend tests only use built-in node:test, but keep this safe)
+node_modules/
+
+# Generated / uploaded audio (the app never stores it, but just in case)
+*.webm
+*.wav
+*.ogg
+*.mp3
+*.m4a
+*.flac
+uploads/
+recordings/

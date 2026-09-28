@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VoiceFlow India: voice typing in English, Hindi and Marathi</title>
+  <meta name="description" content="Record your voice and get editable text in English, Hindi or Marathi." />
+  <link rel="icon" href="assets/logo.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..800;1,9..40,400..800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="nav">
+    <a class="logo" href="#home" aria-label="VoiceFlow India, home">
+      <img src="assets/logo.svg" alt="" width="24" height="24" />
+      <span>VoiceFlow India</span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav-links">
+        <li><a href="#home" data-nav="home">Home</a></li>
+        <li><a href="#history" data-nav="history">History</a></li>
+        <li><a href="#settings" data-nav="settings">Settings</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div id="banner" class="banner" role="status" hidden></div>
+
+  <main id="main" tabindex="-1">
+    <!-- ================= HOME ================= -->
+    <section id="view-home" class="view" aria-labelledby="home-title">
+      <div class="hero">
+        <h1 id="home-title" class="hero-small">Speak in your language,</h1>
+        <p class="hero-big" aria-hidden="true">we type it.</p>
+        <p class="hero-sub">Press the microphone, talk, and edit the text that comes back. English, Hindi and Marathi.</p>
+      </div>
+
+      <div class="workspace">
+        <section class="panel recorder" aria-labelledby="rec-title">
+          <div class="panel-head">
+            <h2 id="rec-title">Listen</h2>
+            <div class="auto-chip" aria-live="polite">
+              <span class="chip-pulse" aria-hidden="true"></span>
+              <span id="detectedLanguage">Auto-detecting</span>
+            </div>
+          </div>
+
+          <div class="voice-stage" aria-hidden="true">
+            <div class="voice-shell">
+              <div class="voice-box">
+                <span class="voice-wave w1"></span>
+                <span class="voice-wave w2"></span>
+                <span class="voice-wave w3"></span>
+                <span class="voice-wave w4"></span>
+                <span class="voice-wave w5"></span>
+              </div>
+              <div class="phrase-stack">
+                <span class="phrase broken">“Train ku… platform?”</span>
+                <span class="phrase fixed">“Train to platform 3 is this way.”</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="mic-zone">
+            <button id="micBtn" class="mic" type="button" aria-label="Start recording">
+              <svg class="icon-mic" width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3" fill="currentColor" stroke="none"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+              <svg class="icon-stop" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="3" fill="currentColor"/></svg>
+            </button>
+            <div id="timer" class="timer" aria-label="Recording time">00:00</div>
+            <div id="status" class="status" data-state="idle" role="status" aria-live="polite">
+              <span class="dot" aria-hidden="true"></span><span id="statusText">Idle. Press the microphone to start.</span>
+            </div>
+          </div>
+
+          <div class="btn-row center">
+            <button id="pauseBtn" class="btn" type="button" hidden>Pause</button>
+            <button id="stopBtn" class="btn primary" type="button" hidden>Stop and transcribe</button>
+            <button id="cancelBtn" class="btn ghost" type="button" hidden>Cancel</button>
+          </div>
+
+          <div class="test-upload">
+            <input id="fileInput" type="file" accept="audio/*" hidden />
+            <button id="fileBtn" class="link-btn" type="button">Transcribe an audio file instead (for testing)</button>
+          </div>
+        </section>
+
+        <section class="panel editor" aria-labelledby="ed-title">
+          <div class="panel-head">
+            <h2 id="ed-title">Transcript</h2>
+            <div id="counts" class="counts" aria-live="off">0 words · 0 characters</div>
+          </div>
+          <label for="editor" class="sr-only">Transcript text</label>
+          <textarea id="editor" rows="9" spellcheck="true" placeholder="Your transcript appears here. You can also type or paste text and edit it freely."></textarea>
+
+          <div class="btn-row">
+            <button id="copyBtn" class="btn" type="button">Copy</button>
+            <button id="cleanBtn" class="btn" type="button">Clean up</button>
+            <button id="undoBtn" class="btn ghost" type="button" hidden>Undo clean up</button>
+            <span class="spacer"></span>
+            <button id="clearBtn" class="btn ghost" type="button">Clear</button>
+            <button id="saveBtn" class="btn primary" type="button">Save</button>
+          </div>
+
+          <details id="originalBox" class="original" hidden>
+            <summary>Original transcript from the speech service</summary>
+            <p id="originalText" class="original-text"></p>
+            <button id="restoreBtn" class="btn small" type="button">Replace editor with original</button>
+          </details>
+        </section>
+      </div>
+    </section>
+
+    <!-- ================= HISTORY ================= -->
+    <section id="view-history" class="view narrow" aria-labelledby="history-title" hidden>
+      <div class="page-head">
+        <h1 id="history-title">History</h1>
+        <button id="clearHistoryBtn" class="btn danger" type="button">Delete all history</button>
+      </div>
+      <div id="historyError" class="inline-error" role="alert" hidden></div>
+      <ul id="historyList" class="history-list"></ul>
+      <p id="historyEmpty" class="empty" hidden>No saved transcriptions yet. Record something on the Home page and press Save.</p>
+      <div class="btn-row center"><button id="moreBtn" class="btn" type="button" hidden>Load more</button></div>
+    </section>
+
+    <!-- ================= SETTINGS ================= -->
+    <section id="view-settings" class="view narrow" aria-labelledby="settings-title" hidden>
+      <div class="page-head"><h1 id="settings-title">Settings</h1></div>
+      <div class="panel">
+        <fieldset class="checks">
+          <legend>Clean up rules</legend>
+          <label><input type="checkbox" id="setWhitespace" /> Tidy extra spaces and blank lines</label>
+          <label><input type="checkbox" id="setPunctuation" /> Fix spacing around punctuation and add a full stop at the end</label>
+          <label><input type="checkbox" id="setCapitalize" /> Capitalize sentence starts (English letters only)</label>
+          <label><input type="checkbox" id="setFillers" /> Remove English filler words (um, uh, er, hmm)</label>
+        </fieldset>
+
+        <fieldset class="checks">
+          <legend>After transcription</legend>
+          <label><input type="checkbox" id="setAuto" /> Clean up automatically (you can still undo it)</label>
+        </fieldset>
+
+        <div class="btn-row"><button id="saveSettingsBtn" class="btn primary" type="button">Save settings</button></div>
+        <p id="settingsNote" class="note"></p>
+      </div>
+
+      <div class="panel privacy">
+        <h2>Privacy</h2>
+        <p>Your recording is sent to the speech service configured on the backend so it can be converted to text. It is not saved by this app. Transcripts you choose to save are stored in your own MySQL database. This version has no login, so keep it on your own computer.</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="config.js"></script>
+  <script src="lib.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
