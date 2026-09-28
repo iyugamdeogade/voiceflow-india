@@ -2,6 +2,7 @@ package com.voiceflow.config;
 
 import com.voiceflow.provider.OpenAiCompatibleProvider;
 import com.voiceflow.provider.SpeechToTextProvider;
+import java.util.Objects;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -14,8 +15,8 @@ public class SpeechConfig {
     @Bean
     public SpeechToTextProvider speechToTextProvider(AppProperties props) {
         SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
-        factory.setConnectTimeout(props.speech().timeout());
-        factory.setReadTimeout(props.speech().timeout());
+        factory.setConnectTimeout(Objects.requireNonNull(props.speech().timeout()));
+        factory.setReadTimeout(Objects.requireNonNull(props.speech().timeout()));
         return new OpenAiCompatibleProvider(props.speech(), RestClient.builder().requestFactory(factory));
     }
 }

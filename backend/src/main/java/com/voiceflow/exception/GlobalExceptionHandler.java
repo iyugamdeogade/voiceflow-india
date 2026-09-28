@@ -8,6 +8,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
@@ -60,7 +61,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+            @NonNull MethodArgumentNotValidException ex, @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status, @NonNull WebRequest request) {
         String message = ex.getBindingResult().getFieldErrors().stream()
                 .findFirst()
                 .map(e -> e.getField() + ": " + e.getDefaultMessage())
@@ -70,20 +72,23 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestPart(
-            MissingServletRequestPartException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+            @NonNull MissingServletRequestPartException ex, @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status, @NonNull WebRequest request) {
         return body(status, "MISSING_PARAMETER", "Missing required part: " + ex.getRequestPartName());
     }
 
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(
-            MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+            @NonNull MissingServletRequestParameterException ex, @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status, @NonNull WebRequest request) {
         return body(status, "MISSING_PARAMETER", "Missing required parameter: " + ex.getParameterName());
     }
 
     /** Fallback for all other standard Spring MVC errors (404, 405, 415, unreadable JSON, ...). */
     @Override
     protected ResponseEntity<Object> handleExceptionInternal(
-            Exception ex, @Nullable Object ignoredBody, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+            @NonNull Exception ex, @Nullable Object ignoredBody, @NonNull HttpHeaders headers,
+            @NonNull HttpStatusCode status, @NonNull WebRequest request) {
         int code = status.value();
         if (code == 404) return body(status, "NOT_FOUND", "That address does not exist.");
         if (code == 405) return body(status, "METHOD_NOT_ALLOWED", "That method is not allowed here.");
@@ -93,6 +98,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     private ResponseEntity<Object> body(HttpStatusCode status, String code, String message) {
-        return ResponseEntity.status(status).body(ApiResponse.error(code, message));
+        return ResponseEntity.status(java.util.Objects.requireNonNull(status)).body(ApiResponse.error(code, message));
     }
 }

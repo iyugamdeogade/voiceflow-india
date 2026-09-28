@@ -1,7 +1,9 @@
 package com.voiceflow.config;
 
 import java.util.Arrays;
+import java.util.Objects;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -13,7 +15,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     public WebConfig(AppProperties props) {
         this.origins = Arrays.stream(props.cors().allowedOrigins().split(","))
-                .map(String::trim)
+            .map(origin -> Objects.requireNonNull(origin).trim())
                 .filter(s -> !s.isEmpty())
                 .toArray(String[]::new);
         if (Arrays.asList(origins).contains("*")) {
@@ -23,9 +25,9 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addCorsMappings(CorsRegistry registry) {
+    public void addCorsMappings(@NonNull CorsRegistry registry) {
         registry.addMapping("/api/**")
-                .allowedOrigins(origins)
+                .allowedOrigins(Objects.requireNonNull(origins))
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .maxAge(3600);

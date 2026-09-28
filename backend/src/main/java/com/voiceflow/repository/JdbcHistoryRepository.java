@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,7 +20,7 @@ public class JdbcHistoryRepository implements HistoryRepository {
 
     private static final String COLUMNS = "id, language, original_text, edited_text, created_at, updated_at";
 
-    private static final RowMapper<TranscriptionRecord> MAPPER = (rs, rowNum) -> new TranscriptionRecord(
+    @NonNull private static final RowMapper<TranscriptionRecord> MAPPER = (rs, rowNum) -> new TranscriptionRecord(
             rs.getLong("id"),
             rs.getString("language"),
             rs.getString("original_text"),

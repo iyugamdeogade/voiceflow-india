@@ -13,7 +13,7 @@ import org.springframework.mock.web.MockMultipartFile;
 class AudioValidatorTest {
 
     private final AudioValidator validator = new AudioValidator(new AppProperties(
-            new AppProperties.Speech("http://x", "m", "k", java.time.Duration.ofSeconds(5)),
+            new AppProperties.Speech("http://x", "m", "k", java.util.Objects.requireNonNull(java.time.Duration.ofSeconds(5))),
             new AppProperties.Audio(1, 1500),
             new AppProperties.Cleanup(false),
             new AppProperties.Cors("http://localhost:5500")));

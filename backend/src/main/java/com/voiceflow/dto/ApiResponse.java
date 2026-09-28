@@ -1,10 +1,11 @@
 package com.voiceflow.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import org.springframework.lang.Nullable;
 
 /** Every response uses this envelope so the frontend can handle results in one way. */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record ApiResponse<T>(boolean success, T data, ErrorBody error) {
+public record ApiResponse<T>(boolean success, @Nullable T data, @Nullable ErrorBody error) {
 
     public record ErrorBody(String code, String message) {}
 

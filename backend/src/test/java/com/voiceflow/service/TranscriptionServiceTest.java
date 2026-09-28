@@ -22,6 +22,7 @@ import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.mock.web.MockMultipartFile;
 
 /** The speech provider is mocked here. Real provider calls only happen when the app runs. */
@@ -31,13 +32,13 @@ class TranscriptionServiceTest {
     private final HistoryService history = mock(HistoryService.class);
     private TranscriptionService service;
 
-    private final MockMultipartFile audio =
+    @NonNull private final MockMultipartFile audio =
             new MockMultipartFile("audio", "r.webm", "audio/webm", AudioValidatorTest.webm(5000));
 
     @BeforeEach
     void setUp() {
         AppProperties props = new AppProperties(
-                new AppProperties.Speech("http://x", "m", "k", Duration.ofSeconds(5)),
+                new AppProperties.Speech("http://x", "m", "k", java.util.Objects.requireNonNull(Duration.ofSeconds(5))),
                 new AppProperties.Audio(1, 1500),
                 new AppProperties.Cleanup(false),
                 new AppProperties.Cors("http://localhost:5500"));

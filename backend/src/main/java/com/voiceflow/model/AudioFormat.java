@@ -1,5 +1,7 @@
 package com.voiceflow.model;
 
+import org.springframework.lang.NonNull;
+
 /** Audio containers we accept, detected from the file's first bytes. */
 public enum AudioFormat {
     WEBM("webm", "audio/webm"),
@@ -9,15 +11,15 @@ public enum AudioFormat {
     MP3("mp3", "audio/mpeg"),
     FLAC("flac", "audio/flac");
 
-    private final String extension;
-    private final String contentType;
+    @NonNull private final String extension;
+    @NonNull private final String contentType;
 
-    AudioFormat(String extension, String contentType) {
+    AudioFormat(@NonNull String extension, @NonNull String contentType) {
         this.extension = extension;
         this.contentType = contentType;
     }
 
-    public String extension() { return extension; }
+    @NonNull public String extension() { return extension; }
 
-    public String contentType() { return contentType; }
+    @NonNull public String contentType() { return contentType; }
 }

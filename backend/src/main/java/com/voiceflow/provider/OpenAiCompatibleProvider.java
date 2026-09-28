@@ -5,6 +5,7 @@ import com.voiceflow.config.AppProperties;
 import com.voiceflow.exception.ApiException;
 import java.io.InterruptedIOException;
 import java.net.http.HttpTimeoutException;
+import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
@@ -48,10 +49,10 @@ public class OpenAiCompatibleProvider implements SpeechToTextProvider {
         }
 
         MultiValueMap<String, Object> form = new LinkedMultiValueMap<>();
-        form.add("file", new ByteArrayResource(audio.data()) {
+        form.add("file", new ByteArrayResource(Objects.requireNonNull(audio.data())) {
             @Override
             public String getFilename() {
-                return audio.filename();
+            return Objects.requireNonNull(audio.filename());
             }
         });
         form.add("model", config.model());
@@ -62,9 +63,9 @@ public class OpenAiCompatibleProvider implements SpeechToTextProvider {
 
         try {
             JsonNode reply = client.post()
-                    .uri(config.endpoint())
+                    .uri(Objects.requireNonNull(config.endpoint()))
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + config.apiKey())
-                    .contentType(MediaType.MULTIPART_FORM_DATA)
+                    .contentType(Objects.requireNonNull(MediaType.MULTIPART_FORM_DATA))
                     .body(form)
                     .retrieve()
                     .body(JsonNode.class);
@@ -73,7 +74,7 @@ public class OpenAiCompatibleProvider implements SpeechToTextProvider {
                 throw new ApiException(HttpStatus.BAD_GATEWAY, "TRANSCRIPTION_PROVIDER_ERROR",
                         "The speech provider sent a response we could not understand.");
             }
-            return new TranscriptionResult(reply.get("text").asText().trim(), languageCode);
+            return new TranscriptionResult(Objects.requireNonNull(reply.get("text").asText()).trim(), languageCode);
 
         } catch (HttpStatusCodeException e) {
             int status = e.getStatusCode().value();

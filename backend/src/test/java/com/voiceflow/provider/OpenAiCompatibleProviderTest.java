@@ -13,10 +13,12 @@ import com.voiceflow.config.AppProperties;
 import com.voiceflow.exception.ApiException;
 import java.net.SocketTimeoutException;
 import java.time.Duration;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestClient;
 
@@ -29,20 +31,21 @@ class OpenAiCompatibleProviderTest {
 
     private MockRestServiceServer server;
 
-    private OpenAiCompatibleProvider provider(String apiKey) {
+    private OpenAiCompatibleProvider provider(@NonNull String apiKey) {
         RestClient.Builder builder = RestClient.builder();
         server = MockRestServiceServer.bindTo(builder).build();
         return new OpenAiCompatibleProvider(
-                new AppProperties.Speech(URL, "whisper-1", apiKey, Duration.ofSeconds(5)), builder);
+                new AppProperties.Speech(Objects.requireNonNull(URL), "whisper-1", apiKey,
+                    Objects.requireNonNull(Duration.ofSeconds(5))), builder);
     }
 
     @Test
     void sendsMultipartRequestWithBearerKeyAndReturnsText() {
         var provider = provider(SECRET);
         server.expect(requestTo(URL))
-                .andExpect(method(HttpMethod.POST))
+                .andExpect(method(Objects.requireNonNull(HttpMethod.POST)))
                 .andExpect(header("Authorization", "Bearer " + SECRET))
-                .andExpect(content().contentTypeCompatibleWith(MediaType.MULTIPART_FORM_DATA))
+                .andExpect(content().contentTypeCompatibleWith(Objects.requireNonNull(MediaType.MULTIPART_FORM_DATA)))
                 .andRespond(withSuccess("{\"text\":\" नमस्ते \"}", MediaType.APPLICATION_JSON));
 
         TranscriptionResult result = provider.transcribe(audio, "hi");
@@ -68,7 +71,7 @@ class OpenAiCompatibleProviderTest {
     void authFailureIsMappedAndDoesNotLeakTheKey() {
         var provider = provider(SECRET);
         server.expect(requestTo(URL)).andRespond(withStatus(HttpStatus.UNAUTHORIZED)
-                .contentType(MediaType.APPLICATION_JSON).body("{\"error\":\"bad key " + SECRET + "\"}"));
+                .contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON)).body("{\"error\":\"bad key " + SECRET + "\"}"));
         assertThatThrownBy(() -> provider.transcribe(audio, "en"))
                 .isInstanceOfSatisfying(ApiException.class, e -> {
                     assertThat(e.getCode()).isEqualTo("SPEECH_API_AUTH_FAILED");

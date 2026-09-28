@@ -24,12 +24,14 @@ import com.voiceflow.service.TextCleanupService;
 import com.voiceflow.service.TranscriptionService;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.lang.NonNull;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -45,7 +47,8 @@ class ApiControllersTest {
     @MockitoBean SettingsService settingsService;
     @MockitoBean SpeechToTextProvider provider;
 
-    private final MockMultipartFile audio = new MockMultipartFile("audio", "r.webm", "audio/webm", new byte[] {1, 2, 3});
+        @NonNull private final MockMultipartFile audio = Objects.requireNonNull(
+            new MockMultipartFile("audio", "r.webm", "audio/webm", new byte[] {1, 2, 3}));
 
     @Test
     void validUploadReturnsTranscript() throws Exception {
@@ -83,8 +86,8 @@ class ApiControllersTest {
         mvc.perform(multipart("/api/transcriptions").file(audio))
                 .andExpect(status().isBadGateway())
                 .andExpect(jsonPath("$.error.code").value("SPEECH_API_AUTH_FAILED"))
-                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("sk-"))))
-                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Exception"))));
+                .andExpect(content().string(Objects.requireNonNull(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("sk-")))))
+                .andExpect(content().string(Objects.requireNonNull(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("Exception")))));
     }
 
     @Test
@@ -94,12 +97,12 @@ class ApiControllersTest {
         mvc.perform(multipart("/api/transcriptions").file(audio))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error.code").value("INTERNAL_ERROR"))
-                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("hunter2"))));
+                .andExpect(content().string(Objects.requireNonNull(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("hunter2")))));
     }
 
     @Test
     void cleanupEndpointCleansText() throws Exception {
-        mvc.perform(post("/api/transcriptions/cleanup").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/transcriptions/cleanup").contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                         .content("{\"text\":\"hello  world\",\"options\":{\"fixWhitespace\":true,\"fixPunctuation\":true,\"capitalize\":true,\"removeFillers\":false}}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.cleanedText").value("Hello world."))
@@ -108,7 +111,7 @@ class ApiControllersTest {
 
     @Test
     void cleanupRejectsBlankText() throws Exception {
-        mvc.perform(post("/api/transcriptions/cleanup").contentType(MediaType.APPLICATION_JSON).content("{\"text\":\"  \"}"))
+        mvc.perform(post("/api/transcriptions/cleanup").contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON)).content("{\"text\":\"  \"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"));
     }
@@ -140,7 +143,7 @@ class ApiControllersTest {
 
     @Test
     void saveValidatesInput() throws Exception {
-        mvc.perform(post("/api/history").contentType(MediaType.APPLICATION_JSON)
+        mvc.perform(post("/api/history").contentType(Objects.requireNonNull(MediaType.APPLICATION_JSON))
                         .content("{\"language\":\"xx\",\"originalText\":\"a\",\"editedText\":\"b\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error.code").value("VALIDATION_ERROR"));
@@ -161,7 +164,7 @@ class ApiControllersTest {
         mvc.perform(delete("/api/history/1"))
                 .andExpect(status().isServiceUnavailable())
                 .andExpect(jsonPath("$.error.code").value("DATABASE_UNAVAILABLE"))
-                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("secret-host"))));
+                .andExpect(content().string(Objects.requireNonNull(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("secret-host")))));
     }
 
     @Test
@@ -172,6 +175,6 @@ class ApiControllersTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.status").value("UP"))
                 .andExpect(jsonPath("$.data.speechProviderConfigured").value(true))
-                .andExpect(content().string(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("apiKey"))));
+                .andExpect(content().string(Objects.requireNonNull(org.hamcrest.Matchers.not(org.hamcrest.Matchers.containsString("apiKey")))));
     }
 }

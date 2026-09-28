@@ -2,6 +2,7 @@ package com.voiceflow.model;
 
 import com.voiceflow.exception.ApiException;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.Nullable;
 
 /** Languages offered in the UI. The code is the ISO-639-1 value sent to the speech provider. */
 public enum Language {
@@ -13,7 +14,7 @@ public enum Language {
 
     public String code() { return code; }
 
-    public static Language fromCode(String value) {
+    public static Language fromCode(@Nullable String value) {
         if (value == null || value.isBlank() || "auto".equalsIgnoreCase(value.trim())) {
             return EN;
         }

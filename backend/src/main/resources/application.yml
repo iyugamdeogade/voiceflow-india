@@ -36,4 +36,4 @@ voiceflow:
 logging:
   level:
     root: INFO
-    com.voiceflow: INFO
+    "[com.voiceflow]": INFO

@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.voiceflow.model.TranscriptionRecord;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,12 +27,12 @@ class JdbcHistoryRepositoryTest {
                         + ";MODE=MySQL;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;DB_CLOSE_DELAY=-1",
                 "sa", "");
         new ResourceDatabasePopulator(new ClassPathResource("schema-h2.sql")).execute(dataSource);
-        repo = new JdbcHistoryRepository(new JdbcTemplate(dataSource));
+        repo = new JdbcHistoryRepository(new JdbcTemplate(Objects.requireNonNull(dataSource)));
     }
 
     @AfterEach
     void tearDown() {
-        new JdbcTemplate(dataSource).execute("DROP ALL OBJECTS");
+        new JdbcTemplate(Objects.requireNonNull(dataSource)).execute("DROP ALL OBJECTS");
     }
 
     @Test
@@ -62,8 +63,8 @@ class JdbcHistoryRepositoryTest {
         long c = repo.insert("en", "c", "c").id();
         assertThat(repo.count()).isEqualTo(3);
         List<TranscriptionRecord> firstPage = repo.findAll(2, 0);
-        assertThat(firstPage).extracting(TranscriptionRecord::id).containsExactly(c, b);
-        assertThat(repo.findAll(2, 2)).extracting(TranscriptionRecord::id).containsExactly(a);
+        assertThat(firstPage).extracting(record -> record.id()).containsExactly(c, b);
+        assertThat(repo.findAll(2, 2)).extracting(record -> record.id()).containsExactly(a);
     }
 
     @Test

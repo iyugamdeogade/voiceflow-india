@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Locale;
 import java.util.Set;
 import org.springframework.http.HttpStatus;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -84,7 +85,7 @@ public class AudioValidator {
         return true;
     }
 
-    private static ApiException bad(HttpStatus status, String code, String message) {
+    private static ApiException bad(@NonNull HttpStatus status, @NonNull String code, @NonNull String message) {
         return new ApiException(status, code, message);
     }
 }

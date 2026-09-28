@@ -1,6 +1,7 @@
 package com.voiceflow.dto;
 
 import java.util.List;
+import org.springframework.lang.Nullable;
 
 /**
  * @param id                  history id, only present if the result was saved
@@ -10,9 +11,9 @@ import java.util.List;
  * @param status              COMPLETED or NO_SPEECH_DETECTED
  */
 public record TranscriptionResponse(
-        Long id,
+        @Nullable Long id,
         String originalTranscript,
-        String cleanedTranscript,
+        @Nullable String cleanedTranscript,
         String language,
         String status,
         List<String> cleanupOperations) {}
